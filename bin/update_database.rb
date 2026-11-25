@@ -111,15 +111,15 @@ Dir.mktmpdir do |tmp_direcory|
         `#{mysql_with_credentials} #{config["database"]} < #{table_filename} #{filter_out_mysql_warning}`
       end
 
-      # 3. Filter out non-Vietnamese results
-      Helpers.timed_task("Filtering data for Vietnam only") do
+      # 3. Filter out non-HK results
+      Helpers.timed_task("Filtering data for HK only") do
         sql_results = <<~SQL
           CREATE TABLE vn_comp_ids AS 
-          SELECT id FROM competitions WHERE country_id = 'Vietnam';
+          SELECT id FROM competitions WHERE country_id = 'Hong Kong';
 
           CREATE TABLE results_new AS 
           SELECT * FROM results
-          WHERE person_country_id = 'Vietnam'
+          WHERE person_country_id = 'Hong Kong'
             OR regional_single_record IN ('WR', 'AfR', 'AsR', 'ER', 'NAR', 'OcR', 'SAR')
             OR regional_average_record IN ('WR', 'AfR', 'AsR', 'ER', 'NAR', 'OcR', 'SAR')
             OR competition_id IN (SELECT id FROM vn_comp_ids);
@@ -138,13 +138,13 @@ Dir.mktmpdir do |tmp_direcory|
         
         sql_ranks_single = <<~SQL
           DELETE r FROM ranks_single r 
-          LEFT JOIN persons p ON r.person_id = p.id AND p.country_id = 'Vietnam' 
+          LEFT JOIN persons p ON r.person_id = p.id AND p.country_id = 'Hong Kong' 
           WHERE p.id IS NULL;
         SQL
 
         sql_ranks_average = <<~SQL
           DELETE r FROM ranks_average r 
-          LEFT JOIN persons p ON r.person_id = p.id AND p.country_id = 'Vietnam' 
+          LEFT JOIN persons p ON r.person_id = p.id AND p.country_id = 'Hong Kong' 
           WHERE p.id IS NULL;
         SQL
 
